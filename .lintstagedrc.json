@@ -1,0 +1,7 @@
+{
+  "src/**/*.{ts,js}": [
+    "prettier --write",
+    "eslint --max-warnings=0",
+    "vitest related --run"
+  ]
+}
