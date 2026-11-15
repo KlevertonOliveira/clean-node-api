@@ -1,0 +1,26 @@
+# Dependências instaladas
+node_modules/
+
+# Arquivos compilados
+dist/
+build/
+
+# Relatórios de cobertura dos testes
+coverage/
+
+# Arquivos de log
+*.log
+
+# Arquivos gerados automaticamente
+*.min.js
+*.min.css
+
+# Arquivos de lock do NPM
+package-lock.json
+
+# Arquivos de ambiente
+.env
+.env.*
+
+# Arquivos de configuração local do editor
+.vscode/
