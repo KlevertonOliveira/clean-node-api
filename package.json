@@ -11,7 +11,8 @@
     "test:run": "vitest run",
     "test:related": "vitest related --run",
     "test:ci": "vitest run --coverage",
-    "test:coverage:ui": "vitest --coverage"
+    "test:coverage:ui": "vitest --coverage",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -24,17 +25,18 @@
   },
   "homepage": "https://github.com/KlevertonOliveira/clean-node-api#readme",
   "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^6.0.3",
+    "eslint": "^10.15.0",
+    "@eslint/js": "^10.0.1",
+    "globals": "^17.14.0",
+    "typescript-eslint": "^8.36.0",
+    "vitest": "^5.1.0",
+    "@vitest/coverage-v8": "^5.1.0",
+    "prettier": "^3.10.1",
+    "lint-staged": "^17.6.0",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
-    "@eslint/js": "^10.0.1",
-    "@types/node": "^26.6.6",
-    "@vitest/coverage-v8": "^5.1.0",
-    "eslint": "^10.15.0",
-    "globals": "^17.14.0",
-    "lint-staged": "^17.6.0",
-    "prettier": "^3.10.1",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.2",
-    "vitest": "^5.1.0"
+    "husky": "^9.1.7"
   }
 }
