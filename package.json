@@ -6,24 +6,31 @@
   "scripts": {
     "build": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:related": "vitest related --run",
+    "test:ci": "vitest run --coverage",
+    "test:coverage:ui": "vitest --coverage"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/KlevertonOliveira/clean-node-api.git"
   },
   "keywords": [],
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/KlevertonOliveira/clean-node-api/issues"
   },
   "homepage": "https://github.com/KlevertonOliveira/clean-node-api#readme",
   "devDependencies": {
-    "typescript": "^6.0.3",
-    "@types/node": "^26.6.6",
-    "eslint": "^10.15.0",
     "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.1.0",
+    "eslint": "^10.15.0",
     "globals": "^17.14.0",
-    "typescript-eslint": "^8.72.2"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "vitest": "^5.1.0"
   }
 }
