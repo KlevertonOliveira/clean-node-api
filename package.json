@@ -25,18 +25,19 @@
   },
   "homepage": "https://github.com/KlevertonOliveira/clean-node-api#readme",
   "devDependencies": {
-    "@types/node": "^26.6.6",
-    "typescript": "^6.0.3",
-    "eslint": "^10.15.0",
-    "@eslint/js": "^10.0.1",
-    "globals": "^17.14.0",
-    "typescript-eslint": "^8.36.0",
-    "vitest": "^5.1.0",
-    "@vitest/coverage-v8": "^5.1.0",
-    "prettier": "^3.10.1",
-    "lint-staged": "^17.6.0",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
-    "husky": "^9.1.7"
+    "@eslint/js": "^10.0.1",
+    "@faker-js/faker": "^10.6.0",
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.1.0",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.10.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.36.0",
+    "vitest": "^5.1.0"
   }
 }
