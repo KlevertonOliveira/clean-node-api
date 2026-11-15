@@ -29,10 +29,8 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
 
-      // Desativa a regra padrão para utilizar a versão TypeScript
       "no-unused-vars": "off",
 
-      // Variáveis e parâmetros não utilizados são erros
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
