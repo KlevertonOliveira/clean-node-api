@@ -5,12 +5,26 @@ import { MissingParamError } from "@/presentation/helpers/errors";
 
 type SutTypes = {
   sut: LoginRouter;
+  authUseCaseSpy: AuthUseCaseSpy;
 };
 
+export class AuthUseCaseSpy {
+  email!: string;
+  password!: string;
+
+  auth(email: string, password: string): void {
+    this.email = email;
+    this.password = password;
+  }
+}
+
 const makeSut = (): SutTypes => {
-  const sut = new LoginRouter();
+  const authUseCaseSpy = new AuthUseCaseSpy();
+  const sut = new LoginRouter(authUseCaseSpy);
+
   return {
     sut,
+    authUseCaseSpy,
   };
 };
 
@@ -50,5 +64,21 @@ describe("Login Router", () => {
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("password"));
+  });
+
+  test("Should call AuthUseCase with correct params", () => {
+    const { sut, authUseCaseSpy } = makeSut();
+
+    const httpRequest = {
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    };
+
+    sut.route(httpRequest);
+
+    expect(authUseCaseSpy.email).toBe(httpRequest.body.email);
+    expect(authUseCaseSpy.password).toBe(httpRequest.body.password);
   });
 });
