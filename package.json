@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --noEmit",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc && tsc-alias",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/main.js",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "test": "vitest",
@@ -36,6 +39,8 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "prettier": "^3.10.1",
+    "tsc-alias": "^1.9.10",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.36.0",
     "vitest": "^5.1.0"
