@@ -3,9 +3,20 @@ import { faker } from "@faker-js/faker";
 import { LoginRouter } from "./login-router";
 import { MissingParamError } from "@/presentation/helpers/errors";
 
+type SutTypes = {
+  sut: LoginRouter;
+};
+
+const makeSut = (): SutTypes => {
+  const sut = new LoginRouter();
+  return {
+    sut,
+  };
+};
+
 describe("Login Router", () => {
   test("Should return 500 if httpRequest has no body", () => {
-    const sut = new LoginRouter();
+    const { sut } = makeSut();
 
     const httpRequest = {};
     const httpResponse = sut.route(httpRequest);
@@ -14,7 +25,7 @@ describe("Login Router", () => {
   });
 
   test("Should return 400 if no email is provided", () => {
-    const sut = new LoginRouter();
+    const { sut } = makeSut();
 
     const httpRequest = {
       body: {
@@ -28,7 +39,7 @@ describe("Login Router", () => {
   });
 
   test("Should return 400 if no password is provided", () => {
-    const sut = new LoginRouter();
+    const { sut } = makeSut();
 
     const httpRequest = {
       body: {
