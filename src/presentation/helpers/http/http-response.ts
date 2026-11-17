@@ -1,5 +1,6 @@
 import {
   MissingParamError,
+  ServerError,
   UnauthorizedError,
 } from "@/presentation/helpers/errors";
 
@@ -21,7 +22,10 @@ export class HttpResponse {
   }
 
   static serverError(): HttpResponseType {
-    return { statusCode: 500 };
+    return {
+      statusCode: 500,
+      body: new ServerError(),
+    };
   }
 
   static unauthorizedError(): HttpResponseType {

@@ -3,6 +3,7 @@ import { faker } from "@faker-js/faker";
 import { LoginRouter } from "./login-router";
 import {
   MissingParamError,
+  ServerError,
   UnauthorizedError,
 } from "@/presentation/helpers/errors";
 
@@ -48,6 +49,7 @@ describe("LoginRouter", () => {
     });
 
     expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 
   test("Should return 500 if AuthUseCase has no auth method", () => {
@@ -61,6 +63,7 @@ describe("LoginRouter", () => {
     });
 
     expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 
   test("Should return 500 if no httpRequest is provided", () => {
@@ -70,6 +73,7 @@ describe("LoginRouter", () => {
     const httpResponse = sut.route();
 
     expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 
   test("Should return 500 if httpRequest has no body", () => {
@@ -79,6 +83,7 @@ describe("LoginRouter", () => {
     const httpResponse = sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 
   test("Should return 400 if no email is provided", () => {
