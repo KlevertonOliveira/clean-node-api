@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { faker } from "@faker-js/faker";
 import { LoginRouter } from "./login-router";
 import {
@@ -37,35 +37,6 @@ const makeSut = (): SutTypes => {
 };
 
 describe("LoginRouter", () => {
-  test("Should return 500 if no AuthUseCase is provided", () => {
-    /* @ts-expect-error */
-    const sut = new LoginRouter();
-
-    const httpResponse = sut.route({
-      body: {
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-      },
-    });
-
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
-
-  test("Should return 500 if AuthUseCase has no auth method", () => {
-    const sut = new LoginRouter({});
-
-    const httpResponse = sut.route({
-      body: {
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-      },
-    });
-
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
-
   test("Should return 500 if no httpRequest is provided", () => {
     const { sut } = makeSut();
 
@@ -129,6 +100,52 @@ describe("LoginRouter", () => {
 
     expect(httpResponse.statusCode).toBe(401);
     expect(httpResponse.body).toEqual(new UnauthorizedError());
+  });
+
+  test("Should return 500 if no AuthUseCase is provided", () => {
+    /* @ts-expect-error */
+    const sut = new LoginRouter();
+
+    const httpResponse = sut.route({
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    });
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  test("Should return 500 if AuthUseCase has no auth method", () => {
+    const sut = new LoginRouter({});
+
+    const httpResponse = sut.route({
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    });
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  test("Should return 500 if AuthUseCase throws", () => {
+    const { sut, authUseCaseSpy } = makeSut();
+    vi.spyOn(authUseCaseSpy, "auth").mockImplementation(() => {
+      throw new Error();
+    });
+
+    const httpResponse = sut.route({
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    });
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 
   test("Should call AuthUseCase with correct params", () => {
