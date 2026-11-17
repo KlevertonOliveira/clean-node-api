@@ -2,15 +2,11 @@ import { describe, expect, test, vi } from "vitest";
 import { faker } from "@faker-js/faker";
 import { LoginRouter } from "./login-router";
 import {
+  InvalidParamError,
   MissingParamError,
   ServerError,
   UnauthorizedError,
 } from "@/presentation/helpers/errors";
-
-type SutTypes = {
-  sut: LoginRouter;
-  authUseCaseSpy: AuthUseCaseSpy;
-};
 
 export class AuthUseCaseSpy {
   email!: string;
@@ -24,15 +20,33 @@ export class AuthUseCaseSpy {
   }
 }
 
+export class EmailValidatorSpy {
+  isEmailValid!: boolean;
+
+  isValid(_email: string): boolean {
+    return this.isEmailValid;
+  }
+}
+
+type SutTypes = {
+  sut: LoginRouter;
+  authUseCaseSpy: AuthUseCaseSpy;
+  emailValidatorSpy: EmailValidatorSpy;
+};
+
 const makeSut = (): SutTypes => {
   const authUseCaseSpy = new AuthUseCaseSpy();
   authUseCaseSpy.accessToken = faker.string.uuid();
 
-  const sut = new LoginRouter(authUseCaseSpy);
+  const emailValidatorSpy = new EmailValidatorSpy();
+  emailValidatorSpy.isEmailValid = true;
+
+  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy);
 
   return {
     sut,
     authUseCaseSpy,
+    emailValidatorSpy,
   };
 };
 
@@ -69,6 +83,22 @@ describe("LoginRouter", () => {
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("email"));
+  });
+
+  test("Should return 400 if an invalid email is provided", async () => {
+    const { sut, emailValidatorSpy } = makeSut();
+    emailValidatorSpy.isEmailValid = false;
+
+    const httpRequest = {
+      body: {
+        email: "abc",
+        password: faker.internet.password(),
+      },
+    };
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("email"));
   });
 
   test("Should return 400 if no password is provided", async () => {
@@ -118,7 +148,9 @@ describe("LoginRouter", () => {
   });
 
   test("Should return 500 if AuthUseCase has no auth method", async () => {
-    const sut = new LoginRouter({});
+    const emailValidatorSpy = new EmailValidatorSpy();
+    emailValidatorSpy.isEmailValid = true;
+    const sut = new LoginRouter({}, emailValidatorSpy);
 
     const httpResponse = await sut.route({
       body: {
