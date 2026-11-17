@@ -30,4 +30,11 @@ export class HttpResponse {
       body: new UnauthorizedError(),
     };
   }
+
+  static ok<ResponseBody>(body?: ResponseBody): HttpResponseType {
+    return {
+      statusCode: 200,
+      body,
+    };
+  }
 }
