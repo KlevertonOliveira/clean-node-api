@@ -1,8 +1,4 @@
-import {
-  MissingParamError,
-  ServerError,
-  UnauthorizedError,
-} from "@/presentation/helpers/errors";
+import { ServerError, UnauthorizedError } from "@/presentation/helpers/errors";
 
 export type HttpRequestType = {
   body?: any;
@@ -14,10 +10,10 @@ export type HttpResponseType = {
 };
 
 export class HttpResponse {
-  static badRequest(paramName: string): HttpResponseType {
+  static badRequest(error: Error): HttpResponseType {
     return {
       statusCode: 400,
-      body: new MissingParamError(paramName),
+      body: error,
     };
   }
 
