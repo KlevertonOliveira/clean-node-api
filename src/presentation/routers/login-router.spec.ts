@@ -32,6 +32,20 @@ const makeSut = (): SutTypes => {
 };
 
 describe("LoginRouter", () => {
+  test("Should return 500 if no AuthUseCase is provided", () => {
+    /* @ts-expect-error */
+    const sut = new LoginRouter();
+
+    const httpResponse = sut.route({
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    });
+
+    expect(httpResponse.statusCode).toBe(500);
+  });
+
   test("Should return 500 if no httpRequest is provided", () => {
     const { sut } = makeSut();
 
@@ -78,22 +92,6 @@ describe("LoginRouter", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("password"));
   });
 
-  test("Should call AuthUseCase with correct params", () => {
-    const { sut, authUseCaseSpy } = makeSut();
-
-    const httpRequest = {
-      body: {
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-      },
-    };
-
-    sut.route(httpRequest);
-
-    expect(authUseCaseSpy.email).toBe(httpRequest.body.email);
-    expect(authUseCaseSpy.password).toBe(httpRequest.body.password);
-  });
-
   test("Should return 401 when invalid credentials are provided", () => {
     const { sut } = makeSut();
 
@@ -108,5 +106,21 @@ describe("LoginRouter", () => {
 
     expect(httpResponse.statusCode).toBe(401);
     expect(httpResponse.body).toEqual(new UnauthorizedError());
+  });
+
+  test("Should call AuthUseCase with correct params", () => {
+    const { sut, authUseCaseSpy } = makeSut();
+
+    const httpRequest = {
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    };
+
+    sut.route(httpRequest);
+
+    expect(authUseCaseSpy.email).toBe(httpRequest.body.email);
+    expect(authUseCaseSpy.password).toBe(httpRequest.body.password);
   });
 });
