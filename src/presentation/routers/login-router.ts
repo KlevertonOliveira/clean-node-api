@@ -3,11 +3,15 @@ import {
   type HttpResponseType,
   HttpResponse,
 } from "@/presentation/helpers/http";
-import { MissingParamError } from "../helpers/errors";
+import { InvalidParamError, MissingParamError } from "../helpers/errors";
 
 export class LoginRouter {
-  constructor(private readonly authUseCase: any) {
+  constructor(
+    private readonly authUseCase: any,
+    private readonly emailValidator: any,
+  ) {
     this.authUseCase = authUseCase;
+    this.emailValidator = emailValidator;
   }
 
   async route(httpRequest: HttpRequestType): Promise<HttpResponseType> {
@@ -17,6 +21,11 @@ export class LoginRouter {
       if (!email) {
         return HttpResponse.badRequest(new MissingParamError("email"));
       }
+
+      if (!this.emailValidator.isValid(email)) {
+        return HttpResponse.badRequest(new InvalidParamError("email"));
+      }
+
       if (!password) {
         return HttpResponse.badRequest(new MissingParamError("password"));
       }
