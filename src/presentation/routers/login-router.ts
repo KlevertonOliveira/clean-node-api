@@ -10,7 +10,7 @@ export class LoginRouter {
   }
 
   route(httpRequest: HttpRequestType): HttpResponseType {
-    if (!httpRequest.body) return HttpResponse.serverError();
+    if (!httpRequest || !httpRequest.body) return HttpResponse.serverError();
 
     const { email, password } = httpRequest.body;
 
