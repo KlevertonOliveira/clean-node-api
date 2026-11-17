@@ -46,6 +46,19 @@ describe("LoginRouter", () => {
     expect(httpResponse.statusCode).toBe(500);
   });
 
+  test("Should return 500 if AuthUseCase has no auth method", () => {
+    const sut = new LoginRouter({});
+
+    const httpResponse = sut.route({
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    });
+
+    expect(httpResponse.statusCode).toBe(500);
+  });
+
   test("Should return 500 if no httpRequest is provided", () => {
     const { sut } = makeSut();
 
