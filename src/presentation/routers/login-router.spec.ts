@@ -14,15 +14,19 @@ type SutTypes = {
 export class AuthUseCaseSpy {
   email!: string;
   password!: string;
+  accessToken!: string | null;
 
-  auth(email: string, password: string): void {
+  auth(email: string, password: string): string | null {
     this.email = email;
     this.password = password;
+    return this.accessToken;
   }
 }
 
 const makeSut = (): SutTypes => {
   const authUseCaseSpy = new AuthUseCaseSpy();
+  authUseCaseSpy.accessToken = faker.string.uuid();
+
   const sut = new LoginRouter(authUseCaseSpy);
 
   return {
@@ -106,7 +110,8 @@ describe("LoginRouter", () => {
   });
 
   test("Should return 401 when invalid credentials are provided", () => {
-    const { sut } = makeSut();
+    const { sut, authUseCaseSpy } = makeSut();
+    authUseCaseSpy.accessToken = null;
 
     const httpRequest = {
       body: {
@@ -135,5 +140,21 @@ describe("LoginRouter", () => {
 
     expect(authUseCaseSpy.email).toBe(httpRequest.body.email);
     expect(authUseCaseSpy.password).toBe(httpRequest.body.password);
+  });
+
+  test("Should return 200 and accessToken when valid crentials are provided", () => {
+    const { sut, authUseCaseSpy } = makeSut();
+
+    const httpRequest = {
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    };
+
+    const httpResponse = sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(200);
+    expect(httpResponse.body.accessToken).toEqual(authUseCaseSpy.accessToken);
   });
 });
