@@ -194,6 +194,22 @@ describe("LoginRouter", () => {
     expect(authUseCaseSpy.password).toBe(httpRequest.body.password);
   });
 
+  test("Should return 500 if no EmailValidator is provided", async () => {
+    const authUseCaseSpy = new AuthUseCaseSpy();
+    /* @ts-expect-error */
+    const sut = new LoginRouter(authUseCaseSpy);
+
+    const httpResponse = await sut.route({
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    });
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
   test("Should return 200 and accessToken when valid crentials are provided", async () => {
     const { sut, authUseCaseSpy } = makeSut();
 
