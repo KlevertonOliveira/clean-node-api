@@ -21,9 +21,11 @@ export class AuthUseCaseSpy {
 }
 
 export class EmailValidatorSpy {
+  email!: string;
   isEmailValid!: boolean;
 
-  isValid(_email: string): boolean {
+  isValid(email: string): boolean {
+    this.email = email;
     return this.isEmailValid;
   }
 }
@@ -240,6 +242,21 @@ describe("LoginRouter", () => {
 
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  test("Should call EmailValidator with correct email", async () => {
+    const { sut, emailValidatorSpy } = makeSut();
+
+    const httpRequest = {
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    };
+
+    await sut.route(httpRequest);
+
+    expect(emailValidatorSpy.email).toBe(httpRequest.body.email);
   });
 
   test("Should return 200 and accessToken when valid crentials are provided", async () => {
