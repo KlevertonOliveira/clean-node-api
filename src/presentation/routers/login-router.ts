@@ -10,7 +10,8 @@ export class LoginRouter {
   }
 
   route(httpRequest: HttpRequestType): HttpResponseType {
-    if (!httpRequest || !httpRequest.body) return HttpResponse.serverError();
+    if (!this.authUseCase || !httpRequest || !httpRequest.body)
+      return HttpResponse.serverError();
 
     const { email, password } = httpRequest.body;
 
