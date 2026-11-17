@@ -225,6 +225,23 @@ describe("LoginRouter", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
+  test("Should return 500 if EmailValidator throws", async () => {
+    const { sut, emailValidatorSpy } = makeSut();
+    vi.spyOn(emailValidatorSpy, "isValid").mockImplementation(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.route({
+      body: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      },
+    });
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
   test("Should return 200 and accessToken when valid crentials are provided", async () => {
     const { sut, authUseCaseSpy } = makeSut();
 
