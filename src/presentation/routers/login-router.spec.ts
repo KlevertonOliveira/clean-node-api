@@ -31,7 +31,16 @@ const makeSut = (): SutTypes => {
   };
 };
 
-describe("Login Router", () => {
+describe("LoginRouter", () => {
+  test("Should return 500 if no httpRequest is provided", () => {
+    const { sut } = makeSut();
+
+    /* @ts-expect-error */
+    const httpResponse = sut.route();
+
+    expect(httpResponse.statusCode).toBe(500);
+  });
+
   test("Should return 500 if httpRequest has no body", () => {
     const { sut } = makeSut();
 
