@@ -1,4 +1,7 @@
-import { MissingParamError } from "@/presentation/helpers/errors";
+import {
+  MissingParamError,
+  UnauthorizedError,
+} from "@/presentation/helpers/errors";
 
 export type HttpRequestType = {
   body?: any;
@@ -19,5 +22,12 @@ export class HttpResponse {
 
   static serverError(): HttpResponseType {
     return { statusCode: 500 };
+  }
+
+  static unauthorizedError(): HttpResponseType {
+    return {
+      statusCode: 401,
+      body: new UnauthorizedError(),
+    };
   }
 }

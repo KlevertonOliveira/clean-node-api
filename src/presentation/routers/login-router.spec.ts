@@ -1,7 +1,10 @@
 import { describe, expect, test } from "vitest";
 import { faker } from "@faker-js/faker";
 import { LoginRouter } from "./login-router";
-import { MissingParamError } from "@/presentation/helpers/errors";
+import {
+  MissingParamError,
+  UnauthorizedError,
+} from "@/presentation/helpers/errors";
 
 type SutTypes = {
   sut: LoginRouter;
@@ -95,5 +98,6 @@ describe("Login Router", () => {
     const httpResponse = sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(401);
+    expect(httpResponse.body).toEqual(new UnauthorizedError());
   });
 });
