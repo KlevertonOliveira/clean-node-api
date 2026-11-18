@@ -10,9 +10,9 @@
     "start": "node dist/main.js",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:related": "vitest related --run",
+    "test": "vitest --silent --reporter=minimal",
+    "test:run": "vitest run --silent --reporter=minimal",
+    "test:related": "vitest related --run --silent --reporter=minimal",
     "test:ci": "vitest run --coverage",
     "test:coverage:ui": "vitest --coverage",
     "prepare": "husky"
