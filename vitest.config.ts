@@ -5,6 +5,20 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
+    projects: [
+      {
+        test: {
+          name: "unit",
+          include: ["**/*.spec.ts"],
+        },
+      },
+      {
+        test: {
+          name: "integration",
+          include: ["**/*.test.ts"],
+        },
+      },
+    ],
     exclude: ["**/node_modules/**", "**/dist/**", "**/.git/**"],
     coverage: {
       provider: "v8",
