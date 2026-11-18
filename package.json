@@ -13,7 +13,7 @@
     "test": "vitest --silent --reporter=minimal",
     "test:run": "vitest run --silent --reporter=minimal",
     "test:related": "vitest related --run --silent --reporter=minimal",
-    "test:ci": "vitest run --coverage",
+    "test:ci": "vitest run --silent --coverage",
     "test:coverage:ui": "vitest --coverage",
     "prepare": "husky"
   },
