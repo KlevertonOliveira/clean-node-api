@@ -1,4 +1,4 @@
-import { ServerError, UnauthorizedError } from "@/presentation/helpers/errors";
+import { ServerError, UnauthorizedError } from "@/utils/errors";
 
 export type HttpRequestType = {
   body?: any;

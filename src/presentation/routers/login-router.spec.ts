@@ -6,7 +6,7 @@ import {
   MissingParamError,
   ServerError,
   UnauthorizedError,
-} from "@/presentation/helpers/errors";
+} from "@/utils/errors";
 
 export class AuthUseCaseSpy {
   email!: string;

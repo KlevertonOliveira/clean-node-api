@@ -3,7 +3,7 @@ import {
   type HttpResponseType,
   HttpResponse,
 } from "@/presentation/helpers/http";
-import { InvalidParamError, MissingParamError } from "../helpers/errors";
+import { InvalidParamError, MissingParamError } from "../../utils/errors";
 
 export class LoginRouter {
   constructor(
