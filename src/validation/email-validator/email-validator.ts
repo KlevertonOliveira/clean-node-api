@@ -1,5 +1,7 @@
+import { z } from "zod";
+
 export class EmailValidator {
-  isValid(_email: string): boolean {
-    return true;
+  isValid(email: string): boolean {
+    return z.email().safeParse(email).success;
   }
 }
