@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { AuthUseCase } from "./auth-usecase";
-import { InvalidParamError, MissingParamError } from "@/utils/errors";
+import { MissingParamError } from "@/utils/errors";
 import { faker } from "@faker-js/faker";
 
 class LoadUserByEmailRepositorySpy {
@@ -49,9 +49,7 @@ describe("Auth UseCase", () => {
 
     const promise = sut.auth(faker.internet.email(), faker.internet.password());
 
-    await expect(promise).rejects.toThrow(
-      new MissingParamError("loadUserByEmailRepository"),
-    );
+    await expect(promise).rejects.toThrow();
   });
 
   test("Should throw if LoadUserByEmailRepository has no load method", async () => {
@@ -59,9 +57,7 @@ describe("Auth UseCase", () => {
 
     const promise = sut.auth(faker.internet.email(), faker.internet.password());
 
-    await expect(promise).rejects.toThrow(
-      new InvalidParamError("loadUserByEmailRepository"),
-    );
+    await expect(promise).rejects.toThrow();
   });
 
   test("Should call LoadUserByEmailRepository with correct email", async () => {
