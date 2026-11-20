@@ -43,6 +43,17 @@ describe("Auth UseCase", () => {
     await expect(promise).rejects.toThrow(new MissingParamError("password"));
   });
 
+  test("Should throw if no LoadUserByEmailRepository is provided", async () => {
+    // @ts-expect-error
+    const sut = new AuthUseCase();
+
+    const promise = sut.auth(faker.internet.email(), faker.internet.password());
+
+    await expect(promise).rejects.toThrow(
+      new MissingParamError("loadUserByEmailRepository"),
+    );
+  });
+
   test("Should call LoadUserByEmailRepository with correct email", async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
     const email = faker.internet.email();
