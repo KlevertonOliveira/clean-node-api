@@ -35,6 +35,27 @@ class EncrypterSpy {
   }
 }
 
+const makeLoadUserByEmailRepository = (): LoadUserByEmailRepositorySpy => {
+  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
+  loadUserByEmailRepositorySpy.user = {
+    id: faker.string.uuid(),
+    password: faker.internet.password(),
+  };
+  return loadUserByEmailRepositorySpy;
+};
+
+const makeEncrypter = (): EncrypterSpy => {
+  const encrypterSpy = new EncrypterSpy();
+  encrypterSpy.isValid = true;
+  return encrypterSpy;
+};
+
+const makeTokenGenerator = (): TokenGeneratorSpy => {
+  const tokenGeneratorSpy = new TokenGeneratorSpy();
+  tokenGeneratorSpy.accessToken = faker.string.alphanumeric();
+  return tokenGeneratorSpy;
+};
+
 type SutTypes = {
   sut: AuthUseCase;
   loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
@@ -43,17 +64,9 @@ type SutTypes = {
 };
 
 const makeSut = (): SutTypes => {
-  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
-  loadUserByEmailRepositorySpy.user = {
-    id: faker.string.uuid(),
-    password: faker.internet.password(),
-  };
-
-  const encrypterSpy = new EncrypterSpy();
-  encrypterSpy.isValid = true;
-
-  const tokenGeneratorSpy = new TokenGeneratorSpy();
-  tokenGeneratorSpy.accessToken = faker.string.alphanumeric();
+  const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepository();
+  const encrypterSpy = makeEncrypter();
+  const tokenGeneratorSpy = makeTokenGenerator();
 
   const sut = new AuthUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
