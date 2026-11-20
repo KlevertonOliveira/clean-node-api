@@ -72,4 +72,15 @@ describe("Auth UseCase", () => {
 
     expect(loadUserByEmailRepositorySpy.email).toBe(email);
   });
+
+  test("Should return null if LoadUserByEmailRepository returns null", async () => {
+    const { sut } = makeSut();
+
+    const accessToken = await sut.auth(
+      faker.internet.email(),
+      faker.internet.password(),
+    );
+
+    expect(accessToken).toBeNull();
+  });
 });
