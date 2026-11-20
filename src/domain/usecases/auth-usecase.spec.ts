@@ -3,6 +3,16 @@ import { AuthUseCase } from "./auth-usecase";
 import { MissingParamError } from "@/utils/errors";
 import { faker } from "@faker-js/faker";
 
+class TokenGeneratorSpy {
+  userId!: string;
+  accessToken!: string;
+
+  async generate(userId: string): Promise<any> {
+    this.userId = userId;
+    return this.accessToken;
+  }
+}
+
 class LoadUserByEmailRepositorySpy {
   email!: string;
   user!: any;
@@ -29,23 +39,33 @@ type SutTypes = {
   sut: AuthUseCase;
   loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
   encrypterSpy: EncrypterSpy;
+  tokenGeneratorSpy: TokenGeneratorSpy;
 };
 
 const makeSut = (): SutTypes => {
-  const encrypterSpy = new EncrypterSpy();
-  encrypterSpy.isValid = true;
-
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
   loadUserByEmailRepositorySpy.user = {
+    id: faker.string.uuid(),
     password: faker.internet.password(),
   };
 
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy);
+  const encrypterSpy = new EncrypterSpy();
+  encrypterSpy.isValid = true;
+
+  const tokenGeneratorSpy = new TokenGeneratorSpy();
+  tokenGeneratorSpy.accessToken = faker.string.alphanumeric();
+
+  const sut = new AuthUseCase(
+    loadUserByEmailRepositorySpy,
+    encrypterSpy,
+    tokenGeneratorSpy,
+  );
 
   return {
     sut,
     loadUserByEmailRepositorySpy,
     encrypterSpy,
+    tokenGeneratorSpy,
   };
 };
 
@@ -78,7 +98,8 @@ describe("Auth UseCase", () => {
 
   test("Should throw if LoadUserByEmailRepository has no load method", async () => {
     const encrypterSpy = new EncrypterSpy();
-    const sut = new AuthUseCase({}, encrypterSpy);
+    const tokenGeneratorSpy = new TokenGeneratorSpy();
+    const sut = new AuthUseCase({}, encrypterSpy, tokenGeneratorSpy);
 
     const promise = sut.auth(faker.internet.email(), faker.internet.password());
 
@@ -141,5 +162,13 @@ describe("Auth UseCase", () => {
     expect(encrypterSpy.hashedPassword).toBe(
       loadUserByEmailRepositorySpy.user.password,
     );
+  });
+
+  test("Should call TokenGenerator with userId", async () => {
+    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy } = makeSut();
+
+    await sut.auth(faker.internet.email(), faker.internet.password());
+
+    expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id);
   });
 });
