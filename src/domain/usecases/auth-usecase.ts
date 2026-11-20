@@ -4,6 +4,7 @@ export class AuthUseCase {
   constructor(
     private readonly loadUserByEmailRepository: any,
     private readonly encrypter: any,
+    private readonly tokenGenerator: any,
   ) {}
 
   async auth(email: string, password: string): Promise<any> {
@@ -15,5 +16,7 @@ export class AuthUseCase {
 
     const isValid = this.encrypter.compare(password, user.password);
     if (!isValid) return null;
+
+    await this.tokenGenerator.generate(user.id);
   }
 }
