@@ -55,11 +55,11 @@ const makeSut = (): SutTypes => {
   const tokenGeneratorSpy = new TokenGeneratorSpy();
   tokenGeneratorSpy.accessToken = faker.string.alphanumeric();
 
-  const sut = new AuthUseCase(
-    loadUserByEmailRepositorySpy,
-    encrypterSpy,
-    tokenGeneratorSpy,
-  );
+  const sut = new AuthUseCase({
+    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    encrypter: encrypterSpy,
+    tokenGenerator: tokenGeneratorSpy,
+  });
 
   return {
     sut,
@@ -97,7 +97,11 @@ describe("Auth UseCase", () => {
   test("Should throw if LoadUserByEmailRepository has no load method", async () => {
     const encrypterSpy = new EncrypterSpy();
     const tokenGeneratorSpy = new TokenGeneratorSpy();
-    const sut = new AuthUseCase({}, encrypterSpy, tokenGeneratorSpy);
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: {},
+      encrypter: encrypterSpy,
+      tokenGenerator: tokenGeneratorSpy,
+    });
     const promise = sut.auth(faker.internet.email(), faker.internet.password());
 
     await expect(promise).rejects.toThrow();

@@ -1,23 +1,25 @@
 import { MissingParamError } from "@/utils/errors";
 
+type Dependencies = {
+  loadUserByEmailRepository: any;
+  encrypter: any;
+  tokenGenerator: any;
+};
+
 export class AuthUseCase {
-  constructor(
-    private readonly loadUserByEmailRepository: any,
-    private readonly encrypter: any,
-    private readonly tokenGenerator: any,
-  ) {}
+  constructor(private readonly deps: Dependencies) {}
 
   async auth(email: string, password: string): Promise<any> {
     if (!email) throw new MissingParamError("email");
     if (!password) throw new MissingParamError("password");
 
-    const user = await this.loadUserByEmailRepository.load(email);
+    const user = await this.deps.loadUserByEmailRepository.load(email);
     if (!user) return null;
 
-    const isValid = this.encrypter.compare(password, user.password);
+    const isValid = this.deps.encrypter.compare(password, user.password);
     if (!isValid) return null;
 
-    const accessToken = await this.tokenGenerator.generate(user.id);
+    const accessToken = await this.deps.tokenGenerator.generate(user.id);
     return accessToken;
   }
 }
