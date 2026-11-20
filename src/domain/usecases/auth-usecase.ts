@@ -1,4 +1,4 @@
-import { MissingParamError } from "@/utils/errors";
+import { InvalidParamError, MissingParamError } from "@/utils/errors";
 
 export class AuthUseCase {
   constructor(private readonly loadUserByEmailRepository: any) {}
@@ -9,6 +9,10 @@ export class AuthUseCase {
 
     if (!this.loadUserByEmailRepository) {
       throw new MissingParamError("loadUserByEmailRepository");
+    }
+
+    if (!this.loadUserByEmailRepository.load) {
+      throw new InvalidParamError("loadUserByEmailRepository");
     }
 
     await this.loadUserByEmailRepository.load(email);
