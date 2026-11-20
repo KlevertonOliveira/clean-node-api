@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { AuthUseCase } from "./auth-usecase";
 import { MissingParamError } from "@/utils/errors";
 import { faker } from "@faker-js/faker";
@@ -54,6 +54,21 @@ const makeTokenGenerator = (): TokenGeneratorSpy => {
   const tokenGeneratorSpy = new TokenGeneratorSpy();
   tokenGeneratorSpy.accessToken = faker.string.alphanumeric();
   return tokenGeneratorSpy;
+};
+
+const makeLoadUserByEmailRepositoryWithError = () => {
+  const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepository();
+  vi.spyOn(loadUserByEmailRepositorySpy, "load").mockRejectedValue(new Error());
+};
+
+const makeEncrypterWithError = () => {
+  const encrypterSpy = makeEncrypter();
+  vi.spyOn(encrypterSpy, "compare").mockRejectedValue(new Error());
+};
+
+const makeTokenGeneratorWithError = () => {
+  const tokenGeneratorSpy = makeTokenGenerator();
+  vi.spyOn(tokenGeneratorSpy, "generate").mockRejectedValue(new Error());
 };
 
 type SutTypes = {
@@ -210,6 +225,29 @@ describe("Auth UseCase", () => {
       tokenGenerator: {},
     }),
   ])("Should throw if invalid dependencies are provided", async (sut) => {
+    const promise = sut.auth(faker.internet.email(), faker.internet.password());
+    await expect(promise).rejects.toThrow();
+  });
+
+  test.each([
+    new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepositoryWithError(),
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGenerator(),
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+      encrypter: makeEncrypterWithError(),
+      tokenGenerator: makeTokenGenerator(),
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGeneratorWithError(),
+    }),
+  ])("Should throw if any dependency throws", async (sut) => {
     const promise = sut.auth(faker.internet.email(), faker.internet.password());
     await expect(promise).rejects.toThrow();
   });
