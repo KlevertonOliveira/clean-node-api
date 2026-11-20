@@ -99,27 +99,6 @@ describe("Auth UseCase", () => {
     await expect(promise).rejects.toThrow(new MissingParamError("password"));
   });
 
-  test("Should throw if no dependency is provided", async () => {
-    // @ts-expect-error
-    const sut = new AuthUseCase();
-    const promise = sut.auth(faker.internet.email(), faker.internet.password());
-
-    await expect(promise).rejects.toThrow();
-  });
-
-  test("Should throw if LoadUserByEmailRepository has no load method", async () => {
-    const encrypterSpy = new EncrypterSpy();
-    const tokenGeneratorSpy = new TokenGeneratorSpy();
-    const sut = new AuthUseCase({
-      loadUserByEmailRepository: {},
-      encrypter: encrypterSpy,
-      tokenGenerator: tokenGeneratorSpy,
-    });
-    const promise = sut.auth(faker.internet.email(), faker.internet.password());
-
-    await expect(promise).rejects.toThrow();
-  });
-
   test("Should call LoadUserByEmailRepository with correct email", async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
     const email = faker.internet.email();
@@ -180,5 +159,58 @@ describe("Auth UseCase", () => {
 
     expect(accessToken).toBe(tokenGeneratorSpy.accessToken);
     expect(accessToken).toBeTruthy();
+  });
+
+  test.each([
+    new AuthUseCase({
+      loadUserByEmailRepository: null,
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGenerator(),
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: {},
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGenerator(),
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+      encrypter: null,
+      tokenGenerator: makeTokenGenerator(),
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+      encrypter: {},
+      tokenGenerator: makeTokenGenerator(),
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+      encrypter: makeEncrypter(),
+      tokenGenerator: null,
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+      encrypter: makeEncrypter(),
+      tokenGenerator: {},
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: null,
+      encrypter: null,
+      tokenGenerator: null,
+    }),
+
+    new AuthUseCase({
+      loadUserByEmailRepository: {},
+      encrypter: {},
+      tokenGenerator: {},
+    }),
+  ])("Should throw if invalid dependencies are provided", async (sut) => {
+    const promise = sut.auth(faker.internet.email(), faker.internet.password());
+    await expect(promise).rejects.toThrow();
   });
 });
