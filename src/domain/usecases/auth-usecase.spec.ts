@@ -13,19 +13,36 @@ class LoadUserByEmailRepositorySpy {
   }
 }
 
+class EncrypterSpy {
+  password!: string;
+  hashedPassword!: string;
+
+  compare(password: string, hashedPassword: string) {
+    this.password = password;
+    this.hashedPassword = hashedPassword;
+  }
+}
+
 type SutTypes = {
   sut: AuthUseCase;
   loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
+  encrypterSpy: EncrypterSpy;
 };
 
 const makeSut = (): SutTypes => {
+  const encrypterSpy = new EncrypterSpy();
+
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
-  loadUserByEmailRepositorySpy.user = {};
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy);
+  loadUserByEmailRepositorySpy.user = {
+    password: faker.internet.password(),
+  };
+
+  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy);
 
   return {
     sut,
     loadUserByEmailRepositorySpy,
+    encrypterSpy,
   };
 };
 
@@ -57,7 +74,8 @@ describe("Auth UseCase", () => {
   });
 
   test("Should throw if LoadUserByEmailRepository has no load method", async () => {
-    const sut = new AuthUseCase({});
+    const encrypterSpy = new EncrypterSpy();
+    const sut = new AuthUseCase({}, encrypterSpy);
 
     const promise = sut.auth(faker.internet.email(), faker.internet.password());
 
@@ -106,5 +124,18 @@ describe("Auth UseCase", () => {
     );
 
     expect(accessToken).toBeNull();
+  });
+
+  test("Should call Encrypter with correct values", async () => {
+    const { sut, loadUserByEmailRepositorySpy, encrypterSpy } = makeSut();
+
+    const password = faker.internet.password();
+
+    await sut.auth(faker.internet.email(), password);
+
+    expect(encrypterSpy.password).toBe(password);
+    expect(encrypterSpy.hashedPassword).toBe(
+      loadUserByEmailRepositorySpy.user.password,
+    );
   });
 });
