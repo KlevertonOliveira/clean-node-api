@@ -5,8 +5,11 @@ import { faker } from "@faker-js/faker";
 
 class LoadUserByEmailRepositorySpy {
   email!: string;
+  user!: any;
+
   async load(email: string): Promise<any> {
     this.email = email;
+    return this.user;
   }
 }
 
@@ -17,6 +20,7 @@ type SutTypes = {
 
 const makeSut = (): SutTypes => {
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
+  loadUserByEmailRepositorySpy.user = {};
   const sut = new AuthUseCase(loadUserByEmailRepositorySpy);
 
   return {
@@ -69,8 +73,9 @@ describe("Auth UseCase", () => {
     expect(loadUserByEmailRepositorySpy.email).toBe(email);
   });
 
-  test("Should return null if LoadUserByEmailRepository returns null", async () => {
-    const { sut } = makeSut();
+  test("Should return null if LoadUserByEmailRepository does not return a user", async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    loadUserByEmailRepositorySpy.user = null;
 
     const accessToken = await sut.auth(
       faker.internet.email(),
