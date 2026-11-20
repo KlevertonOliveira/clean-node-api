@@ -13,7 +13,7 @@ export class AuthUseCase {
     const user = await this.loadUserByEmailRepository.load(email);
     if (!user) return null;
 
-    this.encrypter.compare(password, user.password);
-    return null;
+    const isValid = this.encrypter.compare(password, user.password);
+    if (!isValid) return null;
   }
 }
