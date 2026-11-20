@@ -84,4 +84,27 @@ describe("Auth UseCase", () => {
 
     expect(accessToken).toBeNull();
   });
+
+  test("Should return null if LoadUserByEmailRepository does not return a user", async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    loadUserByEmailRepositorySpy.user = null;
+
+    const accessToken = await sut.auth(
+      faker.internet.email(),
+      faker.internet.password(),
+    );
+
+    expect(accessToken).toBeNull();
+  });
+
+  test("Should return null if an invalid password is provided", async () => {
+    const { sut } = makeSut();
+
+    const accessToken = await sut.auth(
+      faker.internet.email(),
+      faker.internet.password(),
+    );
+
+    expect(accessToken).toBeNull();
+  });
 });
