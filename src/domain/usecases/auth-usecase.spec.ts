@@ -16,10 +16,12 @@ class LoadUserByEmailRepositorySpy {
 class EncrypterSpy {
   password!: string;
   hashedPassword!: string;
+  isValid!: boolean;
 
-  compare(password: string, hashedPassword: string) {
+  compare(password: string, hashedPassword: string): boolean {
     this.password = password;
     this.hashedPassword = hashedPassword;
+    return this.isValid;
   }
 }
 
@@ -31,6 +33,7 @@ type SutTypes = {
 
 const makeSut = (): SutTypes => {
   const encrypterSpy = new EncrypterSpy();
+  encrypterSpy.isValid = true;
 
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
   loadUserByEmailRepositorySpy.user = {
@@ -116,7 +119,8 @@ describe("Auth UseCase", () => {
   });
 
   test("Should return null if an invalid password is provided", async () => {
-    const { sut } = makeSut();
+    const { sut, encrypterSpy } = makeSut();
+    encrypterSpy.isValid = false;
 
     const accessToken = await sut.auth(
       faker.internet.email(),
