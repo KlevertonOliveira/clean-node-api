@@ -3,9 +3,31 @@ import { AuthUseCase } from "./auth-usecase";
 import { MissingParamError } from "@/utils/errors";
 import { faker } from "@faker-js/faker";
 
+class LoadUserByEmailRepositorySpy {
+  email!: string;
+  async load(email: string): Promise<any> {
+    this.email = email;
+  }
+}
+
+type SutTypes = {
+  sut: AuthUseCase;
+  loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
+};
+
+const makeSut = (): SutTypes => {
+  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
+  const sut = new AuthUseCase(loadUserByEmailRepositorySpy);
+
+  return {
+    sut,
+    loadUserByEmailRepositorySpy,
+  };
+};
+
 describe("Auth UseCase", () => {
   test("Should throw if no email is provided", async () => {
-    const sut = new AuthUseCase();
+    const { sut } = makeSut();
     /* @ts-expect-error */
     const promise = sut.auth();
 
@@ -13,10 +35,20 @@ describe("Auth UseCase", () => {
   });
 
   test("Should throw if no password is provided", async () => {
-    const sut = new AuthUseCase();
+    const { sut } = makeSut();
+
     /* @ts-expect-error */
     const promise = sut.auth(faker.internet.email());
 
     await expect(promise).rejects.toThrow(new MissingParamError("password"));
+  });
+
+  test("Should call LoadUserByEmailRepository with correct email", async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    const email = faker.internet.email();
+
+    await sut.auth(email, faker.internet.password());
+
+    expect(loadUserByEmailRepositorySpy.email).toBe(email);
   });
 });
