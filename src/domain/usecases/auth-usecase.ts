@@ -4,6 +4,7 @@ type Dependencies = {
   loadUserByEmailRepository: any;
   encrypter: any;
   tokenGenerator: any;
+  updateAccessTokenRepository: any;
 };
 
 export class AuthUseCase {
@@ -20,6 +21,9 @@ export class AuthUseCase {
     if (!isValid) return null;
 
     const accessToken = await this.deps.tokenGenerator.generate(user.id);
+
+    await this.deps.updateAccessTokenRepository.update(user.id, accessToken);
+
     return accessToken;
   }
 }
