@@ -12,11 +12,15 @@ vi.mock("bcrypt", () => ({
   },
 }));
 
+const makeSut = (): Encrypter => {
+  return new Encrypter();
+};
+
 describe("Encrypter", () => {
   test("Should return true if bcrypt returns true", async () => {
     mocks.compare.mockResolvedValue(true);
 
-    const sut = new Encrypter();
+    const sut = makeSut();
 
     const isValid = await sut.compare(
       faker.string.alphanumeric(),
@@ -29,7 +33,7 @@ describe("Encrypter", () => {
   test("Should return false if bcrypt returns false", async () => {
     mocks.compare.mockResolvedValue(false);
 
-    const sut = new Encrypter();
+    const sut = makeSut();
 
     const isValid = await sut.compare(
       faker.string.alphanumeric(),
@@ -40,7 +44,7 @@ describe("Encrypter", () => {
   });
 
   test("Should call bcrypt with correct values", async () => {
-    const sut = new Encrypter();
+    const sut = makeSut();
 
     const value = faker.string.alphanumeric();
     const hash = faker.string.alphanumeric();
