@@ -10,9 +10,13 @@ vi.mock("jsonwebtoken", () => ({
   },
 }));
 
+const makeSut = (): TokenGenerator => {
+  return new TokenGenerator();
+};
+
 describe("Token Generator", () => {
   test("Should throw if no id is provided", async () => {
-    const sut = new TokenGenerator();
+    const sut = makeSut();
 
     // @ts-expect-error
     const promise = sut.generate();
@@ -22,7 +26,7 @@ describe("Token Generator", () => {
 
   test("Should return null if JWT returns null", async () => {
     vi.mocked(jwt.sign).mockImplementation(() => null);
-    const sut = new TokenGenerator();
+    const sut = makeSut();
     const token = await sut.generate(faker.string.uuid());
     expect(token).toBeNull();
   });
@@ -31,7 +35,7 @@ describe("Token Generator", () => {
     const jwtTokenMock = faker.string.uuid();
     vi.mocked(jwt.sign).mockImplementation(() => jwtTokenMock);
 
-    const sut = new TokenGenerator();
+    const sut = makeSut();
     const token = await sut.generate(faker.string.uuid());
 
     expect(token).toBe(jwtTokenMock);
