@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { EmailValidator } from "./email-validator";
+import { MissingParamError } from "@/utils/errors";
 
 const makeSut = (): EmailValidator => {
   return new EmailValidator();
@@ -21,6 +22,11 @@ vi.mock("zod", () => ({
 describe("EmailValidator", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+  });
+
+  test("Should throw if no email is provided", () => {
+    const sut = makeSut();
+    expect(sut.isValid).toThrow(new MissingParamError("email"));
   });
 
   test("Should call validator with correct email ", () => {
