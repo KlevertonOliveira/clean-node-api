@@ -1,6 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import { Encrypter } from "./encrypter";
 import { faker } from "@faker-js/faker";
+import { MissingParamError } from "../errors";
 
 const mocks = vi.hoisted(() => ({
   compare: vi.fn<(data: string, encrypted: string) => Promise<boolean>>(),
@@ -17,6 +18,15 @@ const makeSut = (): Encrypter => {
 };
 
 describe("Encrypter", () => {
+  test("Should throw if no value is provided", async () => {
+    const sut = makeSut();
+
+    // @ts-expect-error
+    const promise = sut.compare();
+
+    await expect(promise).rejects.toThrow(new MissingParamError("value"));
+  });
+
   test("Should return true if bcrypt returns true", async () => {
     mocks.compare.mockResolvedValue(true);
 
