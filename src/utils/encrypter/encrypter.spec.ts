@@ -38,4 +38,16 @@ describe("Encrypter", () => {
 
     expect(isValid).toBeFalsy();
   });
+
+  test("Should call bcrypt with correct values", async () => {
+    const sut = new Encrypter();
+
+    const value = faker.string.alphanumeric();
+    const hash = faker.string.alphanumeric();
+
+    await sut.compare(value, hash);
+
+    expect(mocks.compare).toHaveBeenCalledOnce();
+    expect(mocks.compare).toHaveBeenCalledWith(value, hash);
+  });
 });
