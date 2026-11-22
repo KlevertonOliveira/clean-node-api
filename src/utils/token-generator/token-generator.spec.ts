@@ -19,11 +19,16 @@ const makeSut = (): TokenGenerator => {
 describe("Token Generator", () => {
   test("Should throw if no id is provided", async () => {
     const sut = makeSut();
-
     // @ts-expect-error
     const promise = sut.generate();
-
     await expect(promise).rejects.toThrow(new MissingParamError("id"));
+  });
+
+  test("Should throw if no secret is provided", async () => {
+    // @ts-expect-error
+    const sut = new TokenGenerator();
+    const promise = sut.generate(faker.string.uuid());
+    await expect(promise).rejects.toThrow(new MissingParamError("secret"));
   });
 
   test("Should call JWT with correct values", async () => {
