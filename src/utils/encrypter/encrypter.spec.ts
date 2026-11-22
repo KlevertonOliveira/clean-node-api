@@ -27,6 +27,27 @@ describe("Encrypter", () => {
     await expect(promise).rejects.toThrow(new MissingParamError("value"));
   });
 
+  test("Should throw if no hash is provided", async () => {
+    const sut = makeSut();
+
+    // @ts-expect-error
+    const promise = sut.compare(faker.string.alphanumeric());
+
+    await expect(promise).rejects.toThrow(new MissingParamError("hash"));
+  });
+
+  test("Should call bcrypt with correct values", async () => {
+    const sut = makeSut();
+
+    const value = faker.string.alphanumeric();
+    const hash = faker.string.alphanumeric();
+
+    await sut.compare(value, hash);
+
+    expect(mocks.compare).toHaveBeenCalledOnce();
+    expect(mocks.compare).toHaveBeenCalledWith(value, hash);
+  });
+
   test("Should return true if bcrypt returns true", async () => {
     mocks.compare.mockResolvedValue(true);
 
@@ -51,17 +72,5 @@ describe("Encrypter", () => {
     );
 
     expect(isValid).toBeFalsy();
-  });
-
-  test("Should call bcrypt with correct values", async () => {
-    const sut = makeSut();
-
-    const value = faker.string.alphanumeric();
-    const hash = faker.string.alphanumeric();
-
-    await sut.compare(value, hash);
-
-    expect(mocks.compare).toHaveBeenCalledOnce();
-    expect(mocks.compare).toHaveBeenCalledWith(value, hash);
   });
 });
