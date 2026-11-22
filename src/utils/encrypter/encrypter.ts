@@ -1,5 +1,8 @@
+import bcrypt from "bcrypt";
+
 export class Encrypter {
-  async compare(_password: string, _hashedPassword: string) {
-    return true;
+  async compare(value: string, hash: string) {
+    const isValid = await bcrypt.compare(value, hash);
+    return isValid;
   }
 }
