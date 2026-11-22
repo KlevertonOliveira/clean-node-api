@@ -10,8 +10,10 @@ vi.mock("jsonwebtoken", () => ({
   },
 }));
 
+const secret = faker.string.alphanumeric();
+
 const makeSut = (): TokenGenerator => {
-  return new TokenGenerator();
+  return new TokenGenerator(secret);
 };
 
 describe("Token Generator", () => {
@@ -22,6 +24,17 @@ describe("Token Generator", () => {
     const promise = sut.generate();
 
     await expect(promise).rejects.toThrow(new MissingParamError("id"));
+  });
+
+  test("Should call JWT with correct values", async () => {
+    const sut = makeSut();
+    const id = faker.string.uuid();
+    await sut.generate(id);
+
+    const jwtSignMock = vi.mocked(jwt.sign);
+
+    expect(jwtSignMock).toHaveBeenCalledOnce();
+    expect(jwtSignMock).toHaveBeenCalledWith(id, secret);
   });
 
   test("Should return null if JWT returns null", async () => {
