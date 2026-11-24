@@ -16,7 +16,7 @@ export default defineConfig({
         test: {
           name: "integration",
           include: ["**/*.test.ts"],
-          globalSetup: ["./src/tests/setup/mongodb.global.ts"],
+          globalSetup: ["./src/infra/tests/setup/mongodb.global.ts"],
         },
       },
     ],

@@ -10,7 +10,7 @@ import { LoadUserByEmailRepository } from "./load-user-by-email-repository";
 import { MissingParamError } from "@/utils/errors";
 import { faker } from "@faker-js/faker";
 
-import { createTestDatabase } from "@/tests/helpers/mongodb";
+import { createTestDatabase } from "@/infra/tests/helpers/mongodb";
 
 describe("LoadUserByEmail Repository", () => {
   let database: Awaited<ReturnType<typeof createTestDatabase>>;
