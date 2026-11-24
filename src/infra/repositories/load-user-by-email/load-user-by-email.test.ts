@@ -46,13 +46,20 @@ describe("LoadUserByEmail Repository", () => {
 
   test("Should return an user if a user is found", async () => {
     const email = faker.internet.email();
+    const password = faker.internet.password();
+    const name = faker.person.firstName();
 
-    await database.db.collection("users").insertOne({
-      name: "John",
-      email,
-    });
+    const fakeUser = await database.db
+      .collection("users")
+      .insertOne({ name, email, password });
 
     const user = await sut.load(email);
-    expect(user?.email).toBe(email);
+
+    expect(user).toEqual({
+      _id: fakeUser.insertedId,
+      name,
+      email,
+      password,
+    });
   });
 });
