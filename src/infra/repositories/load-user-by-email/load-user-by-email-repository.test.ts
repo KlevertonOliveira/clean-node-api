@@ -39,6 +39,13 @@ describe("LoadUserByEmail Repository", () => {
     await expect(promise).rejects.toThrow(new MissingParamError("email"));
   });
 
+  test("Should throw if no userModel is provided", async () => {
+    // @ts-expect-error
+    const sut = new LoadUserByEmailRepository();
+    const promise = sut.load(faker.internet.email());
+    await expect(promise).rejects.toThrow();
+  });
+
   test("Should return null if no user is found", async () => {
     const user = await sut.load(faker.internet.email());
     expect(user).toBeNull();
