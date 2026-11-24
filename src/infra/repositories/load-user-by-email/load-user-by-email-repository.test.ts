@@ -6,7 +6,7 @@ import {
   expect,
   test,
 } from "vitest";
-import { LoadUserByEmailRepository } from "./load-user-by-email";
+import { LoadUserByEmailRepository } from "./load-user-by-email-repository";
 import { MissingParamError } from "@/utils/errors";
 import { faker } from "@faker-js/faker";
 
