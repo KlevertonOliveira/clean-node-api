@@ -1,12 +1,6 @@
+import { User } from "@/infra/types/user";
 import { MissingParamError } from "@/utils/errors";
-import { Collection, ObjectId } from "mongodb";
-
-interface User {
-  _id?: ObjectId;
-  name: string;
-  email: string;
-  password: string;
-}
+import { Collection } from "mongodb";
 
 type Dependencies = {
   userModel: Collection<User>;
