@@ -9,11 +9,15 @@ import {
   test,
 } from "vitest";
 import { UpdateAccessTokenRepository } from "./update-access-token-repository";
+import { MissingParamError } from "@/utils/errors";
+import { User } from "@/infra/types/user";
+import { InsertOneResult } from "mongodb";
 
 describe("UpdateAccessToken Repository", () => {
   let database: Awaited<ReturnType<typeof createTestDatabase>>;
 
   let sut: UpdateAccessTokenRepository;
+  let fakeUser: InsertOneResult<User>;
 
   beforeAll(async () => {
     database = await createTestDatabase();
@@ -25,6 +29,12 @@ describe("UpdateAccessToken Repository", () => {
 
   beforeEach(async () => {
     await database.clearDatabase();
+
+    fakeUser = await database.db.collection("users").insertOne({
+      name: faker.person.firstName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    });
   });
 
   afterAll(async () => {
@@ -35,12 +45,6 @@ describe("UpdateAccessToken Repository", () => {
     // @ts-expect-error
     const sut = new UpdateAccessTokenRepository();
 
-    const fakeUser = await database.db.collection("users").insertOne({
-      name: faker.person.firstName(),
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-    });
-
     const promise = sut.update(
       fakeUser.insertedId,
       faker.string.alphanumeric(),
@@ -49,15 +53,19 @@ describe("UpdateAccessToken Repository", () => {
     await expect(promise).rejects.toThrow();
   });
 
+  test("Should throw if expected params are not provided", async () => {
+    // @ts-expect-error
+    await expect(sut.update()).rejects.toThrow(new MissingParamError("userId"));
+
+    // @ts-expect-error
+    await expect(sut.update(fakeUser.insertedId)).rejects.toThrow(
+      new MissingParamError("accessToken"),
+    );
+  });
+
   test("Should update the user with the given accessToken", async () => {
     const userModel = database.db.collection("users");
     const token = faker.string.alphanumeric();
-
-    const fakeUser = await database.db.collection("users").insertOne({
-      name: faker.person.firstName(),
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-    });
 
     await sut.update(fakeUser.insertedId, token);
 
