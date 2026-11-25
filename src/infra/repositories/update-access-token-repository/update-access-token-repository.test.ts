@@ -31,6 +31,24 @@ describe("UpdateAccessToken Repository", () => {
     await database.close();
   });
 
+  test("Should throw if no userModel is provided", async () => {
+    // @ts-expect-error
+    const sut = new UpdateAccessTokenRepository();
+
+    const fakeUser = await database.db.collection("users").insertOne({
+      name: faker.person.firstName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    });
+
+    const promise = sut.update(
+      fakeUser.insertedId,
+      faker.string.alphanumeric(),
+    );
+
+    await expect(promise).rejects.toThrow();
+  });
+
   test("Should update the user with the given accessToken", async () => {
     const userModel = database.db.collection("users");
     const token = faker.string.alphanumeric();
