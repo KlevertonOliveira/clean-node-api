@@ -1,6 +1,5 @@
-import express from "express";
+import app from "@/main/config/app/app";
 
-const app = express();
 const PORT = 5000;
 
 app.listen(PORT, () => {
