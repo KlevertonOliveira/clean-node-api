@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-export function contentTypeMiddleware(
+export function contentType(
   _: Request,
   res: Response,
   next: NextFunction,
