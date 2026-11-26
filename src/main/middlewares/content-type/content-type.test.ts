@@ -10,4 +10,15 @@ describe("Content-Type Middleware", () => {
 
     await request(app).get("/test_content_type").expect("content-type", /json/);
   });
+
+  test("Should return xml content-type when explicitly informed", async () => {
+    app.get("/test_content_type_xml", (_, res) => {
+      res.type("xml");
+      res.send("");
+    });
+
+    await request(app)
+      .get("/test_content_type_xml")
+      .expect("content-type", /xml/);
+  });
 });
